@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>ROUND 1 · 30 MCQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040810; --bg2:#080f1e; --bg3:#0b1428;
+  --c:#00d4ff;  --cd:rgba(0,212,255,.13); --cg:rgba(0,212,255,.32);
+  --p:#a855f7;  --pd:rgba(168,85,247,.13);--pg:rgba(168,85,247,.32);
+  --w:#ffffff;  --gr:#8892a4; --dm:#3d4a5c;
+  --gn:#00ff88; --rd:#ff4466; --gd:#fbbf24;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--w);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%,rgba(0,212,255,.07),transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%,rgba(168,85,247,.06),transparent),
+    radial-gradient(1px 1px at 15% 25%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1px 1px at 75% 15%,rgba(255,255,255,.2),transparent),
+    radial-gradient(2px 2px at 30% 80%,rgba(0,212,255,.2),transparent);
+}
+
+/* ── Views ── */
+.view{display:none;min-height:100vh;position:relative;z-index:1;flex-direction:column;}
+.view.active{display:flex;}
+
+/* ── Loading ── */
+#loading{
+  position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+  transition:opacity .5s;
+}
+.spinner{
+  width:48px;height:48px;
+  border:2px solid rgba(0,212,255,.1);border-top-color:var(--c);
+  border-radius:50%;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Toast ── */
+#toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  background:var(--bg3);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:.65rem 1.5rem;
+  font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--gr);
+  z-index:10000;opacity:0;transition:opacity .3s;pointer-events:none;
+  white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis;
+}
+#toast.show{opacity:1;}
+#toast.ok{color:var(--gn);border-color:rgba(0,255,136,.3);}
+#toast.err{color:var(--rd);border-color:rgba(255,68,102,.3);}
+
+/* ── Typography ── */
+.orb{font-family:'Orbitron',monospace;}
+.mono{font-family:'Share Tech Mono',monospace;}
+.tcyan{color:var(--c);}  .tpurple{color:var(--p);}
+.tgrey{color:var(--gr);} .tdim{color:var(--dm);}
+.tgold{color:var(--gd);} .tc{text-align:center;}
+
+/* ── Buttons ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.75rem 1.75rem;border-radius:8px;cursor:pointer;
+  font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  letter-spacing:.15em;border:none;transition:all .2s;text-transform:uppercase;
+}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-c{background:transparent;border:1.5px solid var(--c);color:var(--c);}
+.btn-c:hover:not(:disabled){background:var(--cd);box-shadow:0 0 20px var(--cg);}
+.btn-p{background:transparent;border:1.5px solid var(--p);color:var(--p);}
+.btn-p:hover:not(:disabled){background:var(--pd);box-shadow:0 0 20px var(--pg);}
+.btn-g{background:transparent;border:1.5px solid var(--gn);color:var(--gn);}
+.btn-g:hover:not(:disabled){background:rgba(0,255,136,.08);}
+.btn-r{background:transparent;border:1.5px solid var(--rd);color:var(--rd);}
+.btn-r:hover:not(:disabled){background:rgba(255,68,102,.08);}
+.btn-ghost{
+  background:transparent;border:none;color:var(--dm);
+  font-family:'Share Tech Mono',monospace;font-size:.65rem;
+  letter-spacing:.1em;cursor:pointer;text-transform:uppercase;
+}
+.btn-ghost:hover{color:var(--gr);}
+.btn-full{width:100%;} .btn-sm{padding:.35rem .75rem;font-size:.6rem;}
+
+/* ── Inputs ── */
+.label{
+  display:block;font-family:'Share Tech Mono',monospace;
+  font-size:.62rem;letter-spacing:.2em;color:var(--gr);
+  margin-bottom:.45rem;text-transform:uppercase;
+}
+.inp{
+  width:100%;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);border-radius:8px;
+  padding:.75rem 1rem;color:var(--w);
+  font-family:'Share Tech Mono',monospace;font-size:.85rem;
+  outline:none;transition:all .2s;
+}
+.inp:focus{border-color:var(--c);box-shadow:0 0 0 2px var(--cd);}
+.inp.pp:focus{border-color:var(--p);box-shadow:0 0 0 2px var(--pd);}
+textarea.inp{resize:vertical;min-height:125px;font-size:.68rem;line-height:1.6;}
+.fg{margin-bottom:1.25rem;}
+
+/* ── Cards ── */
+.card{background:var(--bg2);border-radius:16px;padding:2rem;width:100%;}
+.card-c{border:1px solid rgba(0,212,255,.22);box-shadow:0 0 35px rgba(0,212,255,.05);}
+.card-p{border:1px solid rgba(168,85,247,.22);box-shadow:0 0 35px rgba(168,85,247,.05);}
+
+/* ── Badges ── */
+.badge{
+  display:inline-block;padding:.2rem .65rem;border-radius:4px;
+  font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;
+}
+.b-c{background:var(--cd);color:var(--c);border:1px solid rgba(0,212,255,.22);}
+.b-p{background:var(--pd);color:var(--p);border:1px solid rgba(168,85,247,.22);}
+.b-g{background:rgba(0,255,136,.08);color:var(--gn);border:1px solid rgba(0,255,136,.22);}
+.b-r{background:rgba(255,68,102,.08);color:var(--rd);border:1px solid rgba(255,68,102,.22);}
+
+.sep{height:1px;background:rgba(255,255,255,.05);margin:1.25rem 0;}
+.vcenter{display:flex;align-items:center;justify-content:center;flex:1;padding:2rem;}
+.mw{width:100%;max-width:440px;}
+
+/* ── Setup ── */
+.step-note{
+  font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--gr);
+  line-height:1.85;padding:.85rem;
+  background:rgba(0,212,255,.03);border:1px solid rgba(0,212,255,.1);
+  border-radius:8px;margin-bottom:1rem;
+}
+.step-note b{color:var(--c);}
+
+/* ── Landing ── */
+#view-land{align-items:center;padding:1.5rem 1.25rem 2rem;}
+.lnd-title{
+  font-family:'Orbitron',monospace;font-weight:900;
+  font-size:clamp(1.5rem,5.5vw,2.3rem);letter-spacing:.06em;
+  text-shadow:0 0 40px rgba(255,255,255,.25);text-align:center;
+}
+.lnd-sub{
+  font-family:'Share Tech Mono',monospace;font-size:.66rem;
+  color:var(--gr);letter-spacing:.35em;margin-top:.45rem;text-align:center;
+}
+.role-card{
+  width:100%;max-width:440px;background:var(--bg2);border-radius:18px;
+  padding:2rem;margin-bottom:1.25rem;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  cursor:pointer;transition:transform .2s,box-shadow .3s;
+}
+.role-card:hover{transform:translateY(-3px);}
+.rc-p{border:1px solid rgba(0,212,255,.28);box-shadow:0 0 30px rgba(0,212,255,.06);}
+.rc-p:hover{box-shadow:0 0 50px rgba(0,212,255,.16);}
+.rc-h{border:1px solid rgba(168,85,247,.28);box-shadow:0 0 30px rgba(168,85,247,.06);}
+.rc-h:hover{box-shadow:0 0 50px rgba(168,85,247,.16);}
+.rc-icon{font-size:2.8rem;margin-bottom:.85rem;}
+.rc-title{font-family:'Orbitron',monospace;font-size:1.25rem;font-weight:700;letter-spacing:.12em;margin-bottom:.4rem;}
+.rc-desc{font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--gr);margin-bottom:1.5rem;}
+.share-strip{
+  width:100%;max-width:440px;background:var(--bg2);
+  border:1px solid rgba(0,212,255,.18);border-radius:12px;
+  padding:.9rem 1.25rem;display:flex;align-items:center;gap:.75rem;
+}
+.ss-url{
+  font-family:'Share Tech Mono',monospace;font-size:.56rem;color:var(--c);
+  flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* ── Waiting ── */
+#view-wait{align-items:center;justify-content:center;}
+.pulse-ring{
+  width:88px;height:88px;border:2px solid var(--c);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin-bottom:2rem;
+  animation:ring-pulse 2s ease-in-out infinite;
+}
+@keyframes ring-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,.35);}
+  50%{box-shadow:0 0 0 18px rgba(0,212,255,0);}
+}
+.stat-mini{
+  background:var(--bg2);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:1.25rem 2rem;margin:1.5rem 0;text-align:center;
+}
+.stat-n{font-family:'Orbitron',monospace;font-size:2rem;color:var(--c);}
+.stat-l{font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--gr);letter-spacing:.15em;margin-top:.2rem;}
+
+/* ── Quiz ── */
+.qhdr{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.9rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.05);
+  background:rgba(8,15,30,.88);backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:10;
+}
+.qprog{font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--gr);letter-spacing:.1em;}
+.qscore{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--dm);margin-top:.15rem;}
+.qtimer{
+  font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:700;
+  color:var(--c);min-width:2.5ch;text-align:right;transition:color .3s;
+}
+.qtimer.warn{color:var(--gd);}
+.qtimer.danger{color:var(--rd);animation:blink .5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.35;}}
+.pbar-wrap{width:100%;height:3px;background:rgba(255,255,255,.04);}
+.pbar{height:100%;background:linear-gradient(90deg,var(--c),var(--p));transition:width .6s ease;}
+.qbody{flex:1;padding:1.25rem 1.25rem 2rem;overflow-y:auto;}
+.qtopbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;}
+.qtopic{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--dm);letter-spacing:.12em;text-transform:uppercase;}
+.qnum{font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--c);letter-spacing:.15em;}
+.qtext{
+  font-family:'Rajdhani',sans-serif;font-size:clamp(.92rem,3vw,1.18rem);
+  font-weight:600;line-height:1.55;margin:.75rem 0 1rem;
+}
+.circ-wrap{width:100%;max-width:340px;margin:.5rem auto 1rem;}
+.opts{display:flex;flex-direction:column;gap:.65rem;}
+.opt{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.9rem 1.1rem;background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.07);border-radius:10px;
+  cursor:pointer;transition:all .18s;text-align:left;
+  font-family:'Rajdhani',sans-serif;font-size:.98rem;color:var(--w);width:100%;
+}
+.opt-l{font-family:'Share Tech Mono',monospace;font-size:.66rem;color:var(--dm);width:1.4rem;flex-shrink:0;}
+.opt:hover:not(:disabled){border-color:var(--c);background:var(--cd);}
+.opt:hover:not(:disabled) .opt-l{color:var(--c);}
+.opt.ok{border-color:var(--gn);background:rgba(0,255,136,.07);color:var(--gn);}
+.opt.ok .opt-l{color:var(--gn);}
+.opt.no{border-color:var(--rd);background:rgba(255,68,102,.07);color:var(--rd);}
+.opt.no .opt-l{color:var(--rd);}
+.opt:disabled{cursor:default;}
+.q-fb{
+  margin-top:1rem;padding:.85rem 1rem;border-radius:8px;
+  font-family:'Share Tech Mono',monospace;font-size:.68rem;
+  display:flex;align-items:flex-start;gap:.6rem;line-height:1.5;
+  animation:fup .3s ease;
+}
+@keyframes fup{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.q-fb.ok{background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.18);color:var(--gn);}
+.q-fb.no{background:rgba(255,68,102,.04);border:1px solid rgba(255,68,102,.18);color:var(--rd);}
+
+/* ── Results ── */
+.score-ring{
+  width:140px;height:140px;border-radius:50%;
+  border:3px solid var(--c);
+  box-shadow:0 0 45px var(--cg),inset 0 0 30px rgba(0,212,255,.07);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin:1.5rem auto;
+}
+.score-n{font-family:'Orbitron',monospace;font-size:2.2rem;font-weight:700;color:var(--c);}
+.score-t{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--gr);}
+
+/* ── Leaderboard ── */
+.plist{
+  background:var(--bg2);border:1px solid rgba(255,255,255,.06);
+  border-radius:12px;overflow:hidden;margin-bottom:1.5rem;
+}
+.pitem{
+  display:flex;align-items:center;padding:.75rem 1rem;
+  border-bottom:1px solid rgba(255,255,255,.04);gap:.85rem;
+}
+.pitem:last-child{border-bottom:none;}
+.p-rk{font-family:'Orbitron',monospace;font-size:.65rem;color:var(--dm);width:1.6rem;flex-shrink:0;}
+.p-nm{flex:1;font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:600;}
+.p-sc{font-family:'Orbitron',monospace;font-size:.85rem;color:var(--c);}
+.p-st{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--dm);letter-spacing:.1em;}
+.p-st.done{color:var(--gn);} .p-st.live{color:var(--gd);}
+
+/* ── Host Panel ── */
+.hhdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.85rem 1.25rem;background:var(--bg2);
+  border-bottom:1px solid rgba(168,85,247,.18);flex-shrink:0;
+}
+.htitle{font-family:'Orbitron',monospace;font-size:.85rem;color:var(--p);letter-spacing:.15em;}
+.hsub{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--dm);letter-spacing:.12em;margin-top:.2rem;}
+.hbody{flex:1;padding:1.25rem;overflow-y:auto;}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem;}
+.scard{background:var(--bg2);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:.85rem;text-align:center;}
+.sn{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:700;color:var(--c);}
+.sl{font-family:'Share Tech Mono',monospace;font-size:.52rem;color:var(--gr);letter-spacing:.12em;margin-top:.2rem;}
+.sec-t{
+  font-family:'Share Tech Mono',monospace;font-size:.6rem;
+  letter-spacing:.2em;color:var(--gr);margin-bottom:.9rem;text-transform:uppercase;
+  display:flex;align-items:center;gap:.5rem;
+}
+.sec-t::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
+.set-box{
+  background:var(--bg2);border:1px solid rgba(168,85,247,.14);
+  border-radius:12px;padding:1.1rem;margin-bottom:1.25rem;
+}
+.tmr-row{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.85rem;}
+.tmr-lbl{font-family:'Rajdhani',sans-serif;font-size:.88rem;color:var(--gr);flex:1;min-width:120px;}
+input[type=range]{flex:2;min-width:100px;accent-color:var(--p);}
+.tmr-val{font-family:'Orbitron',monospace;font-size:1.35rem;color:var(--p);min-width:4ch;text-align:right;}
+.ctrl-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;}
+.ctrl-row .btn{flex:1;min-width:110px;}
+
+@keyframes fi{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.fi{animation:fi .4s ease;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:2px;}
+
+@media(max-width:360px){.lnd-title{font-size:1.3rem;}.qtext{font-size:.88rem;}}
+@media(min-width:600px){
+  .mw,.role-card,.share-strip{max-width:480px;}
+  .qbody,.hbody{max-width:720px;margin:0 auto;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="spinner"></div>
+  <div class="mono tgrey" style="font-size:.62rem;letter-spacing:.2em;margin-top:.5rem">INITIALISING...</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     HOST SETUP  (host only, first time)
+══════════════════════════════════════════ -->
+<div class="view" id="view-setup">
+  <div class="vcenter" style="flex-direction:column;padding:1.5rem;">
+    <div class="tc" style="margin-bottom:1.5rem;">
+      <div class="orb tcyan" style="font-size:1.1rem;font-weight:900;letter-spacing:.1em;text-shadow:0 0 30px rgba(0,212,255,.5)">ROUND 1 · 30 MCQ</div>
+      <div class="mono tgrey" style="font-size:.6rem;letter-spacing:.3em;margin-top:.25rem">HOST — FIRST TIME SETUP</div>
+    </div>
+    <div class="card card-c mw fi">
+      <div class="orb tcyan" style="font-size:.9rem;letter-spacing:.1em;margin-bottom:.5rem">⚡ FIREBASE SETUP</div>
+      <div class="step-note">
+        <b>①</b> Open <b>console.firebase.google.com</b> → Create project<br>
+        <b>②</b> Click &lt;/&gt; Web icon → Register app → copy <b>firebaseConfig</b><br>
+        <b>③</b> Build → Realtime Database → Create → <b>Start in test mode</b><br>
+        <b>④</b> Paste config below. Firebase config will be embedded in the participant share link automatically.
+      </div>
+      <div class="fg">
+        <label class="label">PASTE firebaseConfig (JSON)</label>
+        <textarea class="inp" id="fb-cfg" placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "your-app.firebaseapp.com",
+  "databaseURL": "https://your-app-rtdb.firebaseio.com",
+  "projectId": "your-app",
+  "storageBucket": "your-app.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123:web:abc"
+}'></textarea>
+      </div>
+      <div class="fg">
+        <label class="label">HOST PASSWORD</label>
+        <input class="inp" id="setup-pass" type="text" placeholder="e.g. elec2025" value="elec2025">
+      </div>
+      <button class="btn btn-c btn-full" onclick="saveSetup()">SAVE &amp; ENTER HOST PANEL →</button>
+      <div class="sep"></div>
+      <div class="tc">
+        <div class="mono tgrey" style="font-size:.58rem;margin-bottom:.6rem">NO FIREBASE? DEMO MODE (same device only)</div>
+        <button class="btn btn-p btn-sm" onclick="useDemoMode()">DEMO MODE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LANDING  (role selection)
+══════════════════════════════════════════ -->
+<div class="view" id="view-land">
+  <div style="padding:1.5rem 1.25rem 0;text-align:center;">
+    <div class="lnd-title">ROUND 1 &nbsp;·&nbsp; 30 MCQ</div>
+    <div class="lnd-sub">SELECT YOUR ROLE</div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:center;padding:1.25rem 1.25rem 2rem;width:100%">
+    <div class="role-card rc-p fi" onclick="nav('view-name')">
+      <div class="rc-icon">🎓</div>
+      <div class="rc-title tcyan">PARTICIPANT</div>
+      <div class="rc-desc">Take the quiz on your phone</div>
+      <button class="btn btn-c" onclick="event.stopPropagation();nav('view-name')">ENTER QUIZ &nbsp;→</button>
+    </div>
+    <div class="role-card rc-h fi" onclick="nav('view-hlogin')">
+      <div class="rc-icon">🎛️</div>
+      <div class="rc-title tpurple">HOST</div>
+      <div class="rc-desc">Manage event &amp; view live scores</div>
+      <button class="btn btn-p" onclick="event.stopPropagation();nav('view-hlogin')">HOST PANEL &nbsp;→</button>
+    </div>
+    <div class="share-strip mw fi">
+      <span style="color:var(--c);font-size:1rem;flex-shrink:0">🔗</span>
+      <div class="ss-url" id="share-txt">PARTICIPANT LINK — SHARE WITH STUDENTS</div>
+      <button class="btn btn-c btn-sm" onclick="copyLink()">COPY</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NAME ENTRY  (participant)
+══════════════════════════════════════════ -->
+<div class="view" id="view-name">
+  <div class="vcenter" style="flex-direction:column;">
+    <div class="card card-c mw fi">
+      <div class="orb tcyan" style="font-size:.85rem;letter-spacing:.1em;margin-bottom:.3rem">PARTICIPANT REGISTRATION</div>
+      <div class="mono tgrey" style="font-size:.6rem;letter-spacing:.15em;margin-bottom:1.5rem">ENTER YOUR DETAILS TO JOIN</div>
+      <div class="fg">
+        <label class="label">YOUR NAME</label>
+        <input class="inp" id="p-name" type="text" placeholder="Enter your full name" maxlength="35"
+          onkeydown="if(event.key==='Enter')joinQuiz()">
+      </div>
+      <div class="fg">
+        <label class="label">ROLL NUMBER / ID &nbsp;<span class="tgrey" style="font-size:.55em">(optional)</span></label>
+        <input class="inp" id="p-roll" type="text" placeholder="e.g. 22EC001" maxlength="20"
+          onkeydown="if(event.key==='Enter')joinQuiz()">
+      </div>
+      <button class="btn btn-c btn-full" onclick="joinQuiz()">JOIN QUIZ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     WAITING ROOM
+══════════════════════════════════════════ -->
+<div class="view" id="view-wait">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;padding:2rem">
+    <div class="pulse-ring"><span style="font-size:1.6rem">⚡</span></div>
+    <div class="orb tcyan" style="font-size:1rem;letter-spacing:.15em;margin-bottom:.3rem">YOU'RE IN!</div>
+    <div class="mono tgrey" style="font-size:.66rem;letter-spacing:.18em">WAITING FOR HOST TO START THE QUIZ</div>
+    <div id="wait-name" class="orb" style="font-size:.78rem;color:rgba(255,255,255,.5);margin:1rem 0"></div>
+    <div class="stat-mini">
+      <div class="stat-n" id="wait-count">0</div>
+      <div class="stat-l">PARTICIPANTS JOINED</div>
+    </div>
+    <div class="mono tgrey" style="font-size:.58rem;letter-spacing:.15em;animation:blink 2s infinite">● LIVE</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     QUIZ
+══════════════════════════════════════════ -->
+<div class="view" id="view-quiz">
+  <div class="qhdr">
+    <div>
+      <div class="qprog" id="q-prog">QUESTION 1 / 30</div>
+      <div class="qscore" id="q-scr">SCORE: 0</div>
+    </div>
+    <div class="qtimer" id="q-timer">30</div>
+  </div>
+  <div class="pbar-wrap"><div class="pbar" id="q-pbar" style="width:0%"></div></div>
+  <div class="qbody">
+    <div class="qtopbar">
+      <div class="qtopic" id="q-topic">BASICS</div>
+      <div class="qnum" id="q-num">Q.01</div>
+    </div>
+    <div id="q-circ" class="circ-wrap" style="display:none"></div>
+    <div class="qtext" id="q-text">Loading...</div>
+    <div class="opts" id="q-opts"></div>
+    <div id="q-fb" style="display:none"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RESULTS
+══════════════════════════════════════════ -->
+<div class="view" id="view-res">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:2rem 1.25rem 3rem;width:100%">
+    <div class="tc fi"><div class="mono tgrey" style="font-size:.6rem;letter-spacing:.3em">QUIZ COMPLETE</div></div>
+    <div class="score-ring fi">
+      <div class="score-n" id="res-score">0</div>
+      <div class="score-t" id="res-total">/ 30</div>
+    </div>
+    <div class="orb fi" style="font-size:1rem;margin-bottom:.35rem" id="res-name"></div>
+    <div class="mono tgrey fi" style="font-size:.7rem;margin-bottom:.25rem" id="res-grade"></div>
+    <div class="badge b-c fi" id="res-pct" style="margin-bottom:1.5rem"></div>
+    <div style="width:100%;max-width:440px">
+      <div class="sec-t">🏆 LEADERBOARD</div>
+      <div class="plist" id="res-lb"></div>
+    </div>
+    <button class="btn btn-c" style="margin-top:1rem" onclick="nav('view-land')">← BACK TO LOBBY</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOST LOGIN
+══════════════════════════════════════════ -->
+<div class="view" id="view-hlogin">
+  <div class="vcenter" style="flex-direction:column;">
+    <div class="card card-p mw fi">
+      <div class="orb tpurple" style="font-size:.85rem;letter-spacing:.1em;margin-bottom:.3rem">🛡 HOST ACCESS</div>
+      <div class="mono tgrey" style="font-size:.6rem;letter-spacing:.15em;margin-bottom:1.5rem">PASSWORD PROTECTED</div>
+      <div class="fg">
+        <label class="label">PASSWORD</label>
+        <input class="inp pp" id="h-pwd-in" type="password" placeholder="••••••••••"
+          onkeydown="if(event.key==='Enter')verifyHost()">
+      </div>
+      <button class="btn btn-p btn-full" onclick="verifyHost()">ENTER HOST PANEL →</button>
+      <div class="tc" style="margin-top:.85rem">
+        <button class="btn btn-ghost" onclick="nav('view-land')">← BACK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOST PANEL
+══════════════════════════════════════════ -->
+<div class="view" id="view-host" style="max-height:100vh;overflow:hidden">
+  <div class="hhdr">
+    <div>
+      <div class="htitle">HOST PANEL</div>
+      <div class="hsub">ROUND 1 · 30 MCQ — ELECTRONICS</div>
+    </div>
+    <div style="display:flex;gap:.5rem;align-items:center">
+      <span class="badge b-c" id="h-badge">○ READY</span>
+      <button class="btn btn-p btn-sm" onclick="nav('view-land')">EXIT</button>
+    </div>
+  </div>
+  <div class="hbody">
+    <!-- Live Stats -->
+    <div class="stats-row">
+      <div class="scard"><div class="sn" id="h-joined">0</div><div class="sl">JOINED</div></div>
+      <div class="scard"><div class="sn tpurple" id="h-done">0</div><div class="sl">FINISHED</div></div>
+      <div class="scard"><div class="sn tgold" id="h-avg">—</div><div class="sl">AVG SCORE</div></div>
+    </div>
+    <!-- Timer -->
+    <div class="sec-t">⏱ TIMER SETTINGS</div>
+    <div class="set-box">
+      <div class="tmr-row">
+        <div class="tmr-lbl">Seconds per question</div>
+        <input type="range" id="t-slider" min="10" max="120" step="5" value="30"
+          oninput="setTimerUI(this.value)">
+        <div class="tmr-val"><span id="t-disp">30</span>s</div>
+      </div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+        <span class="mono tdim" style="font-size:.58rem">PRESET:</span>
+        <button class="btn btn-p btn-sm" onclick="setTimer(15)">15s</button>
+        <button class="btn btn-p btn-sm" onclick="setTimer(20)">20s</button>
+        <button class="btn btn-p btn-sm" onclick="setTimer(30)">30s</button>
+        <button class="btn btn-p btn-sm" onclick="setTimer(45)">45s</button>
+        <button class="btn btn-p btn-sm" onclick="setTimer(60)">60s</button>
+        <button class="btn btn-p btn-sm" onclick="setTimer(90)">90s</button>
+      </div>
+    </div>
+    <!-- Controls -->
+    <div class="sec-t">⚙ CONTROLS</div>
+    <div class="ctrl-row">
+      <button class="btn btn-g" id="h-btn-start" onclick="hostStart()">▶ START QUIZ</button>
+      <button class="btn btn-r" onclick="hostReset()">⟳ RESET ALL</button>
+    </div>
+    <div class="mono tgrey" id="h-status-txt" style="font-size:.62rem;letter-spacing:.1em;margin-bottom:1.25rem"></div>
+    <!-- Live Leaderboard -->
+    <div class="sec-t">🏆 LIVE LEADERBOARD</div>
+    <div class="plist" id="h-lb">
+      <div class="pitem"><div class="mono tdim" style="font-size:.68rem">Waiting for participants...</div></div>
+    </div>
+    <div class="sep"></div>
+    <div class="tc">
+      <button class="btn btn-ghost" onclick="resetConfig()">⚙ RECONFIGURE FIREBASE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK (loaded before our script) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   SVG CIRCUIT DIAGRAMS
+   All colours as named constants so no string concat bugs.
+══════════════════════════════════════════════════════ */
+var CW = 'rgba(255,255,255,0.65)';  // wire colour
+var CC = '#00d4ff';                  // cyan accent
+var CP = '#a855f7';                  // purple accent
+var CG = '#00ff88';                  // green accent
+
+function mkSvg(body, h) {
+  if (!h) h = 160;
+  return '<svg viewBox="0 0 340 ' + h + '" xmlns="http://www.w3.org/2000/svg"' +
+    ' style="width:100%;border-radius:8px;border:1px solid rgba(0,212,255,0.15);background:rgba(0,0,0,0.35);display:block">' +
+    '<style>text{font-family:monospace;font-size:10px;}</style>' + body + '</svg>';
+}
+function ln(x1, y1, x2, y2, col, sw) {
+  if (!col) col = CW; if (!sw) sw = 1.5;
+  return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 +
+    '" stroke="' + col + '" stroke-width="' + sw + '"/>';
+}
+function dot(x, y) {
+  return '<circle cx="' + x + '" cy="' + y + '" r="3" fill="' + CC + '"/>';
+}
+function openTerm(x, y) {
+  return '<circle cx="' + x + '" cy="' + y + '" r="5" fill="none" stroke="' + CC + '" stroke-width="1.5"/>';
+}
+function rbox(cx, cy, lbl, col, w, h) {
+  if (!col) col = CC; if (!w) w = 48; if (!h) h = 18;
+  var x = cx - w / 2, y = cy - h / 2;
+  return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h +
+    '" rx="3" fill="#060e1c" stroke="' + CW + '" stroke-width="1.5"/>' +
+    '<text x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle" fill="' + col + '">' + lbl + '</text>';
+}
+function capPlates(cx, cy, lbl) {
+  // Two horizontal plates with gap, wires left and right
+  if (!lbl) lbl = 'C';
+  return ln(cx, cy - 20, cx, cy - 8) +    // top wire
+    ln(cx - 14, cy - 8, cx + 14, cy - 8, CW, 2.5) +  // top plate
+    ln(cx - 14, cy + 2, cx + 14, cy + 2, CW, 2.5) +  // bottom plate
+    ln(cx, cy + 2, cx, cy + 20) +          // bottom wire
+    '<text x="' + (cx + 18) + '" y="' + (cy + 1) + '" fill="' + CP + '">' + lbl + '</text>';
+}
+function capSeries(x, cy, lbl) {
+  // Capacitor inline in horizontal wire: wire─plate║plate─wire
+  if (!lbl) lbl = 'C';
+  return ln(x - 20, cy, x - 6, cy) +
+    ln(x - 6, cy - 12, x - 6, cy + 12, CW, 2.5) +
+    ln(x + 4,  cy - 12, x + 4,  cy + 12, CW, 2.5) +
+    ln(x + 4,  cy, x + 20, cy) +
+    '<text x="' + x + '" y="' + (cy - 16) + '" text-anchor="middle" fill="' + CP + '">' + lbl + '</text>';
+}
+function inductor(x, cy, lbl) {
+  // Horizontal inductor centred at (x, cy), width ~50
+  if (!lbl) lbl = 'L';
+  var x0 = x - 25;
+  return '<path d="M' + x0 + ',' + cy +
+    ' Q' + (x0 + 8) + ',' + (cy - 11) + ' ' + (x0 + 17) + ',' + cy +
+    ' Q' + (x0 + 25) + ',' + (cy - 11) + ' ' + (x0 + 34) + ',' + cy +
+    ' Q' + (x0 + 42) + ',' + (cy - 11) + ' ' + (x0 + 51) + ',' + cy +
+    '" fill="none" stroke="' + CW + '" stroke-width="1.5"/>' +
+    '<text x="' + x + '" y="' + (cy - 15) + '" text-anchor="middle" fill="' + CP + '">' + lbl + '</text>';
+}
+function battery(x, y1, y2, lbl) {
+  if (!lbl) lbl = 'V';
+  var m = (y1 + y2) / 2;
+  return ln(x, y1, x, m - 9) +
+    ln(x - 11, m - 9, x + 11, m - 9, CW, 2.5) +
+    ln(x - 6, m + 1,  x + 6,  m + 1, CW, 1.5) +
+    ln(x, m + 9, x, y2) +
+    '<text x="' + (x - 20) + '" y="' + (m - 3) + '" fill="' + CC + '">+</text>' +
+    '<text x="' + (x - 20) + '" y="' + (m + 10) + '" fill="' + CW + '" fill-opacity="0.45">−</text>' +
+    '<text x="' + (x + 8)  + '" y="' + (m + 4)  + '" fill="white">' + lbl + '</text>';
+}
+function diodeRight(cx, cy) {
+  // Diode pointing right, centred at cx,cy
+  return '<polygon points="' + (cx-9) + ',' + (cy-8) + ' ' + (cx+7) + ',' + cy + ' ' +
+    (cx-9) + ',' + (cy+8) + '" fill="rgba(0,212,255,0.15)" stroke="' + CW + '" stroke-width="1.5"/>' +
+    ln(cx + 7, cy - 9, cx + 7, cy + 9, CW, 1.5);
+}
+function iSrc(cx, cy, lbl) {
+  if (!lbl) lbl = 'I_N';
+  return '<circle cx="' + cx + '" cy="' + cy + '" r="19" fill="#060e1c" stroke="' + CW + '" stroke-width="1.5"/>' +
+    ln(cx, cy + 6, cx, cy - 2) +
+    '<polygon points="' + (cx-4) + ',' + (cy-2) + ' ' + (cx+4) + ',' + (cy-2) + ' ' + cx + ',' + (cy-10) +
+    '" fill="' + CW + '" fill-opacity="0.7"/>' +
+    '<text x="' + cx + '" y="' + (cy + 33) + '" text-anchor="middle" fill="' + CC + '">' + lbl + '</text>';
+}
+
+/* ── Build SVG circuits ── */
+var CIRC = {};
+
+// RC series
+CIRC.RC = mkSvg(
+  battery(32, 20, 140, 'V') +
+  ln(32, 20, 90, 20) +
+  rbox(118, 20, 'R') +
+  ln(146, 20, 170, 20) +
+  capSeries(185, 20, 'C') +
+  ln(205, 20, 308, 20) +
+  ln(308, 20, 308, 140) +
+  ln(32, 140, 308, 140) +
+  '<text x="175" y="65" text-anchor="middle" fill="rgba(255,255,255,0.3)">τ = R × C ?</text>'
+);
+
+// RL series
+CIRC.RL = mkSvg(
+  battery(32, 20, 140, 'V') +
+  ln(32, 20, 90, 20) +
+  rbox(118, 20, 'R') +
+  ln(146, 20, 170, 20) +
+  inductor(205, 20, 'L') +
+  ln(232, 20, 308, 20) +
+  ln(308, 20, 308, 140) +
+  ln(32, 140, 308, 140) +
+  '<text x="175" y="65" text-anchor="middle" fill="rgba(255,255,255,0.3)">τ = L / R ?</text>'
+);
+
+// Series RLC
+CIRC.RLC_S = mkSvg(
+  battery(28, 18, 145, 'V') +
+  ln(28, 18, 72, 18) +
+  rbox(98, 18, 'R', CC, 44) +
+  ln(120, 18, 148, 18) +
+  inductor(180, 18, 'L') +
+  ln(206, 18, 232, 18) +
+  capSeries(248, 18, 'C') +
+  ln(268, 18, 312, 18) +
+  ln(312, 18, 312, 145) +
+  ln(28, 145, 312, 145) +
+  '<text x="175" y="60" text-anchor="middle" fill="rgba(255,255,255,0.28)">Series RLC</text>',
+  160
+);
+
+// Parallel RLC
+CIRC.RLC_P = mkSvg(
+  battery(28, 20, 150, 'V') +
+  ln(28, 20, 310, 20) +
+  ln(28, 150, 310, 150) +
+  ln(100, 20, 100, 150) + rbox(100, 85, 'R', CC) +
+  ln(185, 20, 185, 50) + inductor(185, 62, 'L') + ln(185, 76, 185, 150) +
+  ln(265, 20, 265, 55) + capPlates(265, 80, 'C') + ln(265, 102, 265, 150) +
+  '<text x="175" y="140" text-anchor="middle" fill="rgba(255,255,255,0.28)">Parallel RLC</text>',
+  165
+);
+
+// Wheatstone Bridge
+CIRC.WB = mkSvg(
+  dot(170, 15) + dot(75, 90) + dot(265, 90) + dot(170, 168) +
+  ln(170, 15, 108, 50) + rbox(94, 58, 'P', CC, 44, 16) + ln(80, 66, 75, 90) +
+  ln(170, 15, 232, 50) + rbox(246, 58, 'Q', CC, 44, 16) + ln(260, 66, 265, 90) +
+  ln(75, 90, 75, 130) + rbox(75, 138, 'R', CC, 44, 16) + ln(75, 146, 75, 168) + ln(75, 168, 170, 168) +
+  ln(265, 90, 265, 130) + rbox(265, 138, 'S', CC, 44, 16) + ln(265, 146, 265, 168) + ln(265, 168, 170, 168) +
+  ln(75, 90, 140, 90) +
+  '<circle cx="170" cy="90" r="19" fill="#060e1c" stroke="' + CW + '" stroke-width="1.5"/>' +
+  '<text x="170" y="94" text-anchor="middle" fill="' + CG + '" font-size="12">G</text>' +
+  ln(189, 90, 265, 90) +
+  '<text x="170" y="9" text-anchor="middle" fill="white">A</text>' +
+  '<text x="58" y="94" fill="white">B</text>' +
+  '<text x="274" y="94" fill="white">C</text>' +
+  '<text x="170" y="184" text-anchor="middle" fill="white">D</text>' +
+  ln(170, 15, 170, 2) + ln(170, 168, 170, 183) +
+  ln(170, 2, 328, 2) + ln(328, 2, 328, 183) + ln(170, 183, 328, 183) +
+  battery(328, 20, 165, 'E'),
+  192
+);
+
+// Bridge Rectifier
+CIRC.BR = mkSvg(
+  '<circle cx="38" cy="85" r="22" fill="#060e1c" stroke="' + CW + '" stroke-width="1.5"/>' +
+  '<text x="38" y="83" text-anchor="middle" fill="' + CC + '">AC</text>' +
+  '<text x="38" y="96" text-anchor="middle" fill="' + CC + '" font-size="12">~</text>' +
+  ln(60, 74, 108, 50) + ln(60, 96, 108, 118) +
+  '<g transform="translate(125,42) rotate(-45)">' + diodeRight(0, 0) + '</g>' +
+  '<text x="115" y="40" fill="' + CC + '" font-size="9">D1</text>' +
+  '<g transform="translate(208,42) rotate(45)">' + diodeRight(0, 0) + '</g>' +
+  '<text x="210" y="40" fill="' + CC + '" font-size="9">D2</text>' +
+  '<g transform="translate(125,118) rotate(45)">' + diodeRight(0, 0) + '</g>' +
+  '<text x="115" y="142" fill="' + CC + '" font-size="9">D3</text>' +
+  '<g transform="translate(208,118) rotate(-45)">' + diodeRight(0, 0) + '</g>' +
+  '<text x="210" y="142" fill="' + CC + '" font-size="9">D4</text>' +
+  ln(133, 38, 202, 38) + ln(133, 128, 202, 128) +
+  ln(240, 50, 280, 50) + ln(240, 120, 280, 120) + ln(280, 50, 280, 120) +
+  rbox(280, 85, 'R_L', CG, 36, 60) +
+  '<text x="280" y="33" text-anchor="middle" fill="' + CG + '" font-size="9">+DC</text>' +
+  '<text x="280" y="148" text-anchor="middle" fill="' + CW + '" fill-opacity="0.45" font-size="9">−DC</text>'
+);
+
+// Thevenin Equivalent
+CIRC.TH = mkSvg(
+  '<rect x="18" y="28" width="200" height="104" rx="8" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="5,4"/>' +
+  '<text x="108" y="148" text-anchor="middle" fill="rgba(255,255,255,0.28)" font-size="9">Thevenin Network</text>' +
+  battery(50, 42, 122, 'V_th') +
+  ln(50, 42, 88, 42) +
+  rbox(118, 42, 'R_th', CC) +
+  ln(142, 42, 240, 42) +
+  ln(50, 122, 240, 122) +
+  openTerm(240, 42) + openTerm(240, 122) +
+  '<text x="254" y="46" fill="' + CC + '">A</text>' +
+  '<text x="254" y="126" fill="' + CC + '">B</text>'
+);
+
+// Norton Equivalent
+CIRC.NO = mkSvg(
+  '<rect x="18" y="28" width="200" height="104" rx="8" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="5,4"/>' +
+  '<text x="108" y="148" text-anchor="middle" fill="rgba(255,255,255,0.28)" font-size="9">Norton Network</text>' +
+  ln(18, 42, 240, 42) + ln(18, 122, 240, 122) +
+  ln(55, 42, 55, 66) + iSrc(55, 82, 'I_N') + ln(55, 100, 55, 122) +
+  ln(148, 42, 148, 60) + rbox(148, 78, 'R_N', CC, 44, 34) + ln(148, 96, 148, 122) +
+  openTerm(240, 42) + openTerm(240, 122) +
+  '<text x="254" y="46" fill="' + CC + '">A</text>' +
+  '<text x="254" y="126" fill="' + CC + '">B</text>'
+);
+
+// Inverting Op-Amp
+CIRC.OA = mkSvg(
+  ln(18, 82, 52, 82) +
+  rbox(78, 82, 'R_in', CC) +
+  ln(104, 82, 140, 82) +
+  '<polygon points="140,54 140,110 204,82" fill="#060e1c" stroke="' + CW + '" stroke-width="1.5"/>' +
+  '<text x="150" y="78" fill="' + CC + '">−</text>' +
+  '<text x="150" y="100" fill="' + CC + '">+</text>' +
+  ln(140, 100, 128, 100) + ln(128, 100, 128, 128) +
+  ln(116, 128, 140, 128) + ln(120, 133, 136, 133) + ln(124, 138, 132, 138) +
+  ln(204, 82, 272, 82) +
+  ln(104, 82, 104, 34) + ln(104, 34, 178, 34) +
+  rbox(204, 34, 'R_f', CP) +
+  ln(228, 34, 272, 34) + ln(272, 34, 272, 82) +
+  dot(104, 82) + dot(272, 82) +
+  '<text x="18" y="75" fill="' + CG + '" font-size="9">V_in</text>' +
+  '<text x="276" y="78" fill="' + CG + '" font-size="9">V_out</text>',
+  148
+);
+
+// Voltage Divider
+CIRC.VD = mkSvg(
+  battery(35, 18, 148, 'V_s') +
+  ln(35, 18, 172, 18) +
+  ln(172, 18, 172, 38) +
+  rbox(172, 55, 'R1', CC, 46, 28) +
+  dot(172, 68) + ln(172, 68, 172, 80) +
+  rbox(172, 97, 'R2', CC, 46, 28) +
+  dot(172, 110) + ln(172, 110, 172, 148) +
+  ln(35, 148, 172, 148) +
+  ln(172, 110, 284, 110) + ln(172, 148, 284, 148) +
+  openTerm(284, 110) + openTerm(284, 148) +
+  '<text x="299" y="114" fill="' + CG + '">+</text>' +
+  '<text x="294" y="132" fill="' + CC + '" font-size="9">V_out</text>' +
+  '<text x="299" y="152" fill="' + CW + '" fill-opacity="0.45">−</text>'
+);
+
+/* ══════════════════════════════════════════════════════
+   30 QUESTIONS
+══════════════════════════════════════════════════════ */
+var QS_MASTER = [
+  // BASICS
+  {q:"Which expression correctly states Ohm's Law?",
+   o:["V = I / R","V = I × R","I = V × R","R = V × I"],a:1,t:"Basics"},
+  {q:"The SI unit of electrical conductance is:",
+   o:["Ohm (Ω)","Volt (V)","Siemens (S)","Farad (F)"],a:2,t:"Basics"},
+  {q:"Two 100 Ω resistors connected in parallel give an equivalent resistance of:",
+   o:["200 Ω","100 Ω","50 Ω","25 Ω"],a:2,t:"Basics"},
+  {q:"Faraday's Law states the induced EMF is proportional to:",
+   o:["Magnetic field intensity","Current in the circuit","Rate of change of magnetic flux","Conductor length squared"],a:2,t:"Basics"},
+  {q:"The SI unit of magnetic flux density (B) is:",
+   o:["Weber (Wb)","Tesla (T)","Henry (H)","Maxwell (Mx)"],a:1,t:"Basics"},
+  {q:"In a series resistive circuit, if one resistor's value doubles, the total current will:",
+   o:["Double","Stay the same","Decrease","Become zero"],a:2,t:"Basics"},
+
+  // DEVICES
+  {q:"The forward voltage drop of a conducting silicon P-N diode is approximately:",
+   o:["0.2 V","0.7 V","1.1 V","1.4 V"],a:1,t:"Devices"},
+  {q:"A Zener diode is primarily used as a:",
+   o:["Signal rectifier","Small-signal amplifier","Voltage reference / regulator","Frequency multiplier"],a:2,t:"Devices"},
+  {q:"A MOSFET is controlled by:",
+   o:["Base current","Collector current","Gate voltage","Emitter resistance"],a:2,t:"Devices"},
+  {q:"The bridge rectifier circuit shown uses how many diodes?",
+   o:["1","2","4","6"],a:2,t:"Devices",c:"BR"},
+  {q:"For a 50 Hz AC supply, the output ripple frequency of a full-wave bridge rectifier is:",
+   o:["25 Hz","50 Hz","100 Hz","150 Hz"],a:2,t:"Devices"},
+  {q:"The V_BE of a conducting silicon NPN transistor is approximately:",
+   o:["0 V","0.3 V","0.7 V","1.4 V"],a:2,t:"Devices"},
+
+  // CIRCUIT ANALYSIS
+  {q:"Kirchhoff's Current Law (KCL) states that at any node:",
+   o:["Sum of voltages = 0","Sum of currents in = sum of currents out","Power consumed = power supplied","Voltage is equal across all elements"],a:1,t:"Circuit Analysis"},
+  {q:"Kirchhoff's Voltage Law (KVL) states that in any closed loop:",
+   o:["Algebraic sum of all voltages = 0","Sum of all branch currents = 0","Z = V / I","Max power occurs at resonance"],a:0,t:"Circuit Analysis"},
+  {q:"From the RC series circuit shown, the time constant τ equals:",
+   o:["R / C","R × C","√(RC)","1 / (RC)"],a:1,t:"Circuit Analysis",c:"RC"},
+  {q:"From the RL series circuit shown, the time constant τ equals:",
+   o:["R × L","R / L","L / R","√(L/R)"],a:2,t:"Circuit Analysis",c:"RL"},
+  {q:"In the series RLC circuit shown, resonance occurs when:",
+   o:["X_L = X_C","R = X_L","Power factor = 0","Impedance is maximum"],a:0,t:"Circuit Analysis",c:"RLC_S"},
+  {q:"At resonance in a series RLC circuit, the impedance Z equals:",
+   o:["Maximum (purely reactive)","Zero","Minimum = R (purely resistive)","Infinite"],a:2,t:"Circuit Analysis"},
+  {q:"The impedance of an ideal capacitor C at angular frequency ω is:",
+   o:["jωC","−jωC","1 / (jωC)","jω / C"],a:2,t:"Circuit Analysis"},
+  {q:"In the parallel RLC circuit shown, the impedance at resonance is:",
+   o:["Minimum (near zero)","Maximum (purely resistive)","Purely inductive","Purely capacitive"],a:1,t:"Circuit Analysis",c:"RLC_P"},
+  {q:"The voltage gain of the inverting op-amp circuit shown is:",
+   o:["R_f / R_in","−R_f / R_in","1 + R_f / R_in","−R_in / R_f"],a:1,t:"Circuit Analysis",c:"OA"},
+  {q:"In the voltage divider shown, V_out across R2 equals:",
+   o:["V_s × R1/(R1+R2)","V_s × R2/(R1+R2)","V_s × (R1+R2)/R2","V_s/(R1 × R2)"],a:1,t:"Circuit Analysis",c:"VD"},
+
+  // THEOREMS
+  {q:"Thevenin's theorem states any linear two-terminal network can be replaced by:",
+   o:["I_N in parallel with R_N","Two voltage sources in series","V_th in series with R_th","V source in parallel with resistance"],a:2,t:"Theorems"},
+  {q:"In the Thevenin equivalent shown, the open-circuit terminal voltage is:",
+   o:["V_th","V_th − I × R_th","Zero","V_th / R_th"],a:0,t:"Theorems",c:"TH"},
+  {q:"Norton's theorem states any linear network can be replaced by:",
+   o:["V_th in series with R_th","I_N in parallel with R_N","Two current sources in parallel","R and C in series"],a:1,t:"Theorems"},
+  {q:"In the Norton equivalent shown, the short-circuit current equals:",
+   o:["I_N × R_N","I_N","V_th / (R_th + R_L)","Zero"],a:1,t:"Theorems",c:"NO"},
+  {q:"The Maximum Power Transfer Theorem: maximum power is transferred to load when:",
+   o:["R_L = 0 (short)","R_L → ∞ (open)","R_L = R_th","R_L = 2 × R_th"],a:2,t:"Theorems"},
+  {q:"The Superposition Theorem applies only to:",
+   o:["Non-linear circuits","Linear bilateral circuits","Single-source circuits","Circuits with only capacitors"],a:1,t:"Theorems"},
+  {q:"When applying Superposition, independent voltage sources not under analysis are:",
+   o:["Left unchanged","Short-circuited (replaced by wire)","Open-circuited (removed)","Replaced by Norton equivalents"],a:1,t:"Theorems"},
+  {q:"The Wheatstone bridge shown is balanced (galvanometer reads zero) when:",
+   o:["P + Q = R + S","P × Q = R × S","P / Q = R / S","P − R = Q − S"],a:2,t:"Theorems",c:"WB"}
+];
+
+/* ══════════════════════════════════════════════════════
+   SEEDED SHUFFLE  (different order per participant)
+══════════════════════════════════════════════════════ */
+function seededShuffle(arr, seed) {
+  var a = arr.slice(); var s = (seed >>> 0);
+  for (var i = a.length - 1; i > 0; i--) {
+    s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
+    var j = Math.floor((s / 0x100000000) * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+
+/* ══════════════════════════════════════════════════════
+   APP STATE
+══════════════════════════════════════════════════════ */
+var db = null, useFireb = false, currentCfg = null;
+var hostPwd = 'elec2025', tPerQ = 30;
+var pId = null, pName = '', pScore = 0;
+var pAns = {};    // {idx: answerIndex}
+var qIdx = 0, timerLeft = 30;
+var QS = [];      // shuffled question list for this participant
+var timerIv = null, bc = null;
+var waitIv = null;
+
+/* ══════════════════════════════════════════════════════
+   BOOT  — smart routing on page load
+══════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', function () {
+  var hash = (location.hash || '');
+
+  // ── PARTICIPANT path: URL ends with #join or #join:BASE64 ──
+  if (hash.indexOf('#join') === 0) {
+    var encoded = (hash.indexOf('#join:') === 0) ? hash.slice(6) : null;
+    if (encoded) {
+      try {
+        var cfg = JSON.parse(b64decode(encoded));
+        currentCfg = cfg;
+        lsSet('qFbCfg', JSON.stringify(cfg));
+        hostPwd = lsGet('qHPwd') || 'elec2025';
+        initFb(cfg, true);
+        return;
+      } catch (e) { /* fall through */ }
+    }
+    // Returning participant with saved config
+    var saved = lsGet('qFbCfg');
+    if (saved) {
+      try {
+        currentCfg = JSON.parse(saved);
+        hostPwd = lsGet('qHPwd') || 'elec2025';
+        initFb(currentCfg, true);
+        return;
+      } catch (e) { /* fall through */ }
+    }
+    // Demo mode or no config
+    if (lsGet('qDemo') === '1') { startDemo(true); return; }
+    stopLoad(); nav('view-name');
+    return;
+  }
+
+  // ── HOST path ──
+  hostPwd = lsGet('qHPwd') || 'elec2025';
+  var fbCfg = lsGet('qFbCfg');
+  if (fbCfg) {
+    try { currentCfg = JSON.parse(fbCfg); initFb(currentCfg, false); return; }
+    catch (e) { /* fall through */ }
+  }
+  if (lsGet('qDemo') === '1') { startDemo(false); return; }
+  stopLoad(); nav('view-setup');
+});
+
+function b64decode(s) {
+  var std = s.replace(/-/g, '+').replace(/_/g, '/');
+  var pad = std.length % 4;
+  if (pad === 2) std += '==';
+  else if (pad === 3) std += '=';
+  return atob(std);
+}
+function b64encode(s) {
+  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function stopLoad() {
+  var el = document.getElementById('loading');
+  el.style.opacity = '0';
+  setTimeout(function () { el.style.display = 'none'; }, 500);
+}
+
+function initFb(cfg, goName) {
+  try {
+    if (!window.firebase) { stopLoad(); afterInit(goName); return; }
+    if (!firebase.apps.length) firebase.initializeApp(cfg);
+    db = firebase.database();
+    var done = false;
+    var timer = setTimeout(function () {
+      if (!done) { done = true; stopLoad(); useFireb = false; afterInit(goName); }
+    }, 8000);
+    db.ref('.info/connected').once('value', function (snap) {
+      if (done) return; done = true; clearTimeout(timer);
+      useFireb = !!snap.val();
+      if (!useFireb) showToast('Firebase not reachable — check config', 'err');
+      stopLoad(); afterInit(goName);
+    }, function () {
+      if (done) return; done = true; clearTimeout(timer);
+      stopLoad(); afterInit(goName);
+    });
+  } catch (e) {
+    stopLoad(); afterInit(goName);
+  }
+}
+
+function afterInit(goName) {
+  if (goName) { nav('view-name'); }
+  else { updateShareLink(); nav('view-land'); }
+}
+
+function startDemo(goName) {
+  useFireb = false;
+  if (!dGet('state')) dSet('state', { started: false, ended: false, timePerQ: 30 });
+  if (!dGet('parts')) dSet('parts', {});
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      bc = new BroadcastChannel('quiz_demo_ch');
+      bc.onmessage = function () { checkDemoState(); };
+    }
+  } catch (e) {}
+  stopLoad();
+  if (goName) nav('view-name');
+  else { updateShareLink(); nav('view-land'); }
+}
+
+/* ══════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════ */
+function nav(id) {
+  var views = document.querySelectorAll('.view');
+  for (var i = 0; i < views.length; i++) views[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+/* ══════════════════════════════════════════════════════
+   SHARE LINK
+══════════════════════════════════════════════════════ */
+function updateShareLink() {
+  var base = location.origin + location.pathname;
+  var url = currentCfg ? base + '#join:' + b64encode(JSON.stringify(currentCfg)) : base + '#join';
+  document.getElementById('share-txt').textContent = url;
+}
+
+function copyLink() {
+  var base = location.origin + location.pathname;
+  var url = currentCfg ? base + '#join:' + b64encode(JSON.stringify(currentCfg)) : base + '#join';
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function () { showToast('Link copied! Share with participants ✓', 'ok'); });
+  } else {
+    var t = document.createElement('textarea');
+    t.value = url; document.body.appendChild(t);
+    t.select(); document.execCommand('copy'); document.body.removeChild(t);
+    showToast('Link copied!', 'ok');
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SETUP  (host only)
+══════════════════════════════════════════════════════ */
+function saveSetup() {
+  var raw = document.getElementById('fb-cfg').value.trim();
+  var pass = document.getElementById('setup-pass').value.trim() || 'elec2025';
+  if (!raw) { showToast('Paste Firebase config first', 'err'); return; }
+  var cfg;
+  try {
+    var s = raw
+      .replace(/\/\/.*/g, '')
+      .replace(/const\s+\w+\s*=\s*/, '')
+      .replace(/;?\s*$/, '')
+      .replace(/(\w+)\s*:/g, '"$1":')
+      .replace(/'/g, '"');
+    cfg = JSON.parse(s);
+  } catch (e1) {
+    try { cfg = JSON.parse(raw); } catch (e2) {
+      showToast('Invalid JSON — paste the config exactly as shown', 'err'); return;
+    }
+  }
+  if (!cfg.apiKey || !cfg.databaseURL) {
+    showToast('Missing apiKey or databaseURL in config', 'err'); return;
+  }
+  currentCfg = cfg;
+  lsSet('qFbCfg', JSON.stringify(cfg));
+  lsSet('qHPwd', pass); hostPwd = pass;
+  var ld = document.getElementById('loading');
+  ld.style.cssText = 'display:flex;opacity:1;';
+  initFb(cfg, false);
+}
+
+function useDemoMode() {
+  var pass = document.getElementById('setup-pass').value.trim() || 'elec2025';
+  lsSet('qDemo', '1'); lsSet('qHPwd', pass); hostPwd = pass;
+  var ld = document.getElementById('loading');
+  ld.style.cssText = 'display:flex;opacity:1;';
+  startDemo(false);
+}
+
+function resetConfig() {
+  if (!confirm('Remove Firebase config and start over?')) return;
+  localStorage.removeItem('qFbCfg');
+  localStorage.removeItem('qDemo');
+  localStorage.removeItem('qHPwd');
+  location.hash = '';
+  location.reload();
+}
+
+/* ══════════════════════════════════════════════════════
+   PARTICIPANT — JOIN
+══════════════════════════════════════════════════════ */
+function joinQuiz() {
+  var name = document.getElementById('p-name').value.trim();
+  var roll = document.getElementById('p-roll').value.trim();
+  if (!name) { showToast('Please enter your name', 'err'); return; }
+
+  pName = name; pScore = 0; pAns = {}; qIdx = 0;
+  pId = 'p' + Date.now() + Math.floor(Math.random() * 9999);
+
+  // Unique shuffle seed per participant
+  var seed = 0;
+  for (var i = 0; i < pId.length; i++) seed = (seed * 31 + pId.charCodeAt(i)) >>> 0;
+  QS = seededShuffle(QS_MASTER, seed);
+
+  var displayName = name + (roll ? ' (' + roll + ')' : '');
+  var data = { name: displayName, score: 0, joined: Date.now(), finished: null };
+
+  if (useFireb) {
+    db.ref('quiz/parts/' + pId).set(data).then(function () {
+      document.getElementById('wait-name').textContent = 'Welcome, ' + name;
+      nav('view-wait');
+      watchStart();
+      watchCount();
+    }).catch(function (err) {
+      showToast('Could not register: ' + err.message, 'err');
+    });
+  } else {
+    var pts = dGet('parts') || {};
+    pts[pId] = data; dSet('parts', pts);
+    document.getElementById('wait-name').textContent = 'Welcome, ' + name;
+    nav('view-wait');
+    waitIv = setInterval(function () {
+      checkDemoState();
+      var c = Object.keys(dGet('parts') || {}).length;
+      document.getElementById('wait-count').textContent = c;
+    }, 1100);
+  }
+}
+
+function watchStart() {
+  db.ref('quiz/state').on('value', function (snap) {
+    var st = snap.val(); if (!st) return;
+    if (st.started && !st.ended) {
+      tPerQ = st.timePerQ || 30;
+      if (document.getElementById('view-wait').classList.contains('active')) startQuiz();
+    }
+  });
+}
+function watchCount() {
+  db.ref('quiz/parts').on('value', function (snap) {
+    document.getElementById('wait-count').textContent = Object.keys(snap.val() || {}).length;
+  });
+}
+function checkDemoState() {
+  var st = dGet('state'); if (!st) return;
+  if (st.started && !st.ended && document.getElementById('view-wait').classList.contains('active')) {
+    tPerQ = st.timePerQ || 30;
+    clearInterval(waitIv);
+    startQuiz();
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   QUIZ ENGINE
+══════════════════════════════════════════════════════ */
+function startQuiz() {
+  qIdx = 0; pScore = 0; pAns = {};
+  nav('view-quiz');
+  loadQ(0);
+}
+
+function loadQ(idx) {
+  if (idx >= QS.length) { endQuiz(); return; }
+  var q = QS[idx]; qIdx = idx;
+
+  document.getElementById('q-prog').textContent = 'QUESTION ' + (idx + 1) + ' / ' + QS.length;
+  document.getElementById('q-scr').textContent = 'SCORE: ' + pScore;
+  document.getElementById('q-topic').textContent = q.t.toUpperCase();
+  document.getElementById('q-num').textContent = 'Q.' + (idx + 1 < 10 ? '0' : '') + (idx + 1);
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-pbar').style.width = ((idx / QS.length) * 100) + '%';
+
+  // Circuit diagram
+  var circEl = document.getElementById('q-circ');
+  if (q.c && CIRC[q.c]) {
+    circEl.style.display = 'block';
+    circEl.innerHTML = CIRC[q.c];
+  } else {
+    circEl.style.display = 'none';
+    circEl.innerHTML = '';
+  }
+
+  // Feedback reset
+  var fbEl = document.getElementById('q-fb');
+  fbEl.style.display = 'none'; fbEl.innerHTML = ''; fbEl.className = '';
+
+  // Options
+  var optsEl = document.getElementById('q-opts');
+  optsEl.innerHTML = '';
+  var labels = ['A', 'B', 'C', 'D'];
+  for (var i = 0; i < q.o.length; i++) {
+    (function (optIdx) {
+      var btn = document.createElement('button');
+      btn.className = 'opt';
+      btn.innerHTML = '<span class="opt-l">' + labels[optIdx] + '.</span><span>' + escHtml(q.o[optIdx]) + '</span>';
+      btn.onclick = function () { pick(optIdx); };
+      optsEl.appendChild(btn);
+    })(i);
+  }
+
+  runTimer(tPerQ);
+}
+
+function runTimer(sec) {
+  clearInterval(timerIv);
+  timerLeft = sec;
+  var el = document.getElementById('q-timer');
+  el.textContent = sec; el.className = 'qtimer';
+  timerIv = setInterval(function () {
+    timerLeft--;
+    el.textContent = timerLeft;
+    if (timerLeft <= 10) el.className = 'qtimer warn';
+    if (timerLeft <= 5)  el.className = 'qtimer danger';
+    if (timerLeft <= 0)  { clearInterval(timerIv); noAnswer(); }
+  }, 1000);
+}
+
+function pick(opt) {
+  clearInterval(timerIv);
+  var btns = document.querySelectorAll('.opt');
+  for (var i = 0; i < btns.length; i++) btns[i].disabled = true;
+
+  var q = QS[qIdx];
+  var ok = (opt === q.a);
+  if (ok) pScore++;
+  pAns[qIdx] = opt;
+
+  btns[opt].classList.add(ok ? 'ok' : 'no');
+  if (!ok) btns[q.a].classList.add('ok');
+
+  showFb(ok, q, false);
+  saveProgress();
+  setTimeout(function () { loadQ(qIdx + 1); }, 1800);
+}
+
+function noAnswer() {
+  var btns = document.querySelectorAll('.opt');
+  for (var i = 0; i < btns.length; i++) btns[i].disabled = true;
+  var q = QS[qIdx];
+  if (btns[q.a]) btns[q.a].classList.add('ok');
+  pAns[qIdx] = -1;
+  showFb(false, q, true);
+  saveProgress();
+  setTimeout(function () { loadQ(qIdx + 1); }, 1800);
+}
+
+function showFb(ok, q, timeout) {
+  var el = document.getElementById('q-fb');
+  el.style.display = 'flex';
+  el.className = 'q-fb ' + (ok ? 'ok' : 'no');
+  var L = ['A', 'B', 'C', 'D'];
+  el.innerHTML = ok
+    ? '✓&nbsp;Correct! &nbsp;+1 point'
+    : (timeout ? '⏱ Time up!' : '✗ Incorrect') +
+      ' &mdash; Correct: ' + L[q.a] + '. ' + escHtml(q.o[q.a]);
+}
+
+function saveProgress() {
+  if (useFireb) {
+    db.ref('quiz/parts/' + pId).update({ score: pScore });
+  } else {
+    var pts = dGet('parts') || {};
+    if (pts[pId]) { pts[pId].score = pScore; dSet('parts', pts); }
+  }
+}
+
+function endQuiz() {
+  clearInterval(timerIv);
+  if (useFireb) {
+    db.ref('quiz/parts/' + pId).update({ score: pScore, finished: Date.now() });
+  } else {
+    var pts = dGet('parts') || {};
+    if (pts[pId]) { pts[pId].score = pScore; pts[pId].finished = Date.now(); dSet('parts', pts); }
+  }
+  showResults();
+}
+
+/* ══════════════════════════════════════════════════════
+   RESULTS
+══════════════════════════════════════════════════════ */
+function showResults() {
+  nav('view-res');
+  var tot = QS.length;
+  var pct = Math.round((pScore / tot) * 100);
+  document.getElementById('res-score').textContent = pScore;
+  document.getElementById('res-total').textContent = '/ ' + tot;
+  document.getElementById('res-name').textContent = pName;
+  document.getElementById('res-pct').textContent = pct + '% SCORE';
+  var g = pct >= 90 ? '🏆 OUTSTANDING!' : pct >= 75 ? '⭐ EXCELLENT!' :
+          pct >= 60 ? '👍 GOOD JOB!' : pct >= 40 ? '📚 KEEP STUDYING' : '💪 BETTER LUCK NEXT TIME';
+  document.getElementById('res-grade').textContent = g;
+  if (useFireb) {
+    db.ref('quiz/parts').once('value', function (snap) { renderLB(snap.val() || {}, 'res-lb'); });
+  } else {
+    renderLB(dGet('parts') || {}, 'res-lb');
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HOST LOGIN
+══════════════════════════════════════════════════════ */
+function verifyHost() {
+  var v = document.getElementById('h-pwd-in').value;
+  if (v === hostPwd) {
+    document.getElementById('h-pwd-in').value = '';
+    nav('view-host');
+    initHost();
+  } else {
+    showToast('Incorrect password', 'err');
+    document.getElementById('h-pwd-in').value = '';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   HOST PANEL
+══════════════════════════════════════════════════════ */
+function initHost() {
+  updateShareLink();
+  if (useFireb) {
+    db.ref('quiz/state').once('value', function (snap) {
+      var st = snap.val();
+      if (st) { setTimer(st.timePerQ || 30); applyStatus(st); }
+      else db.ref('quiz/state').set({ started: false, ended: false, timePerQ: 30 });
+    });
+    db.ref('quiz/parts').on('value', function (snap) { refreshLB(snap.val() || {}); });
+    db.ref('quiz/state').on('value', function (snap) { if (snap.val()) applyStatus(snap.val()); });
+  } else {
+    setTimer((dGet('state') || {}).timePerQ || 30);
+    setInterval(function () {
+      refreshLB(dGet('parts') || {});
+      applyStatus(dGet('state') || {});
+    }, 1200);
+  }
+}
+
+function applyStatus(st) {
+  var badge = document.getElementById('h-badge');
+  var stxt = document.getElementById('h-status-txt');
+  var btnS = document.getElementById('h-btn-start');
+  if (st.ended) {
+    badge.className = 'badge b-r'; badge.textContent = '■ ENDED';
+    stxt.textContent = 'QUIZ ENDED — RESET TO RUN AGAIN'; btnS.disabled = true;
+  } else if (st.started) {
+    badge.className = 'badge b-g'; badge.textContent = '● LIVE';
+    stxt.textContent = 'QUIZ IS RUNNING — PARTICIPANTS ARE ANSWERING'; btnS.disabled = true;
+  } else {
+    badge.className = 'badge b-c'; badge.textContent = '○ READY';
+    stxt.textContent = 'QUIZ NOT STARTED — PRESS START WHEN READY'; btnS.disabled = false;
+  }
+}
+
+function refreshLB(parts) {
+  var arr = Object.values(parts).sort(function (a, b) { return (b.score || 0) - (a.score || 0); });
+  var fin = arr.filter(function (p) { return p.finished; }).length;
+  var avg = arr.length ? Math.round(arr.reduce(function (s, p) { return s + (p.score || 0); }, 0) / arr.length) : null;
+  document.getElementById('h-joined').textContent = arr.length;
+  document.getElementById('h-done').textContent = fin;
+  document.getElementById('h-avg').textContent = (avg !== null) ? avg : '—';
+  renderLB(parts, 'h-lb');
+}
+
+function renderLB(parts, id) {
+  var arr = Object.values(parts).sort(function (a, b) { return (b.score || 0) - (a.score || 0); });
+  var el = document.getElementById(id);
+  if (!arr.length) {
+    el.innerHTML = '<div class="pitem"><div class="mono tdim" style="font-size:.68rem">No participants yet...</div></div>';
+    return;
+  }
+  var medals = ['🥇', '🥈', '🥉'];
+  var html = '';
+  for (var i = 0; i < arr.length; i++) {
+    var p = arr[i];
+    var rk = medals[i] || (i + 1);
+    var st = p.finished ? 'done' : 'live';
+    var stTxt = p.finished ? 'DONE' : 'LIVE';
+    html += '<div class="pitem">' +
+      '<div class="p-rk">' + rk + '</div>' +
+      '<div class="p-nm">' + escHtml(p.name || '—') + '</div>' +
+      '<div class="p-sc">' + (p.score || 0) + '/' + QS_MASTER.length + '</div>' +
+      '<div class="p-st ' + st + '">' + stTxt + '</div>' +
+      '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function setTimerUI(v) { document.getElementById('t-disp').textContent = v; tPerQ = parseInt(v, 10); }
+function setTimer(v) {
+  document.getElementById('t-slider').value = v;
+  document.getElementById('t-disp').textContent = v;
+  tPerQ = parseInt(v, 10);
+}
+
+function hostStart() {
+  var st = { started: true, ended: false, timePerQ: tPerQ, startedAt: Date.now() };
+  if (useFireb) {
+    db.ref('quiz/state').set(st).then(function () { showToast('✓ Quiz started — participants can begin!', 'ok'); });
+  } else {
+    dSet('state', st);
+    if (bc) bc.postMessage({ type: 'start' });
+    showToast('Quiz started (Demo mode)', 'ok');
+  }
+}
+
+function hostReset() {
+  if (!confirm('Reset quiz? All participant data will be cleared.')) return;
+  var st = { started: false, ended: false, timePerQ: tPerQ };
+  if (useFireb) {
+    db.ref('quiz').set({ state: st, parts: {} }).then(function () { showToast('Quiz reset ✓', 'ok'); });
+  } else {
+    dSet('state', st); dSet('parts', {});
+    if (bc) bc.postMessage({ type: 'reset' });
+    showToast('Quiz reset ✓', 'ok');
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════════════ */
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+var _toastTimer;
+function showToast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (type ? ' ' + type : '');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function () { el.className = ''; }, 3500);
+}
+
+// localStorage helpers (no-throw)
+function lsGet(k) {
+  try { return localStorage.getItem(k); } catch (e) { return null; }
+}
+function lsSet(k, v) {
+  try { localStorage.setItem(k, v); } catch (e) {}
+}
+
+// Demo-mode storage (prefixed JSON)
+var DK = 'qz_';
+function dGet(k) {
+  try { return JSON.parse(localStorage.getItem(DK + k)); } catch (e) { return null; }
+}
+function dSet(k, v) {
+  try { localStorage.setItem(DK + k, JSON.stringify(v)); } catch (e) {}
+  if (bc) { try { bc.postMessage({ k: k }); } catch (e) {} }
+}
+</script>
+</body>
+</html>
